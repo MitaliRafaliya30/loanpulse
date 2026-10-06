@@ -44,7 +44,7 @@ borrowers and record payments in a collections app.
 - Repayment frequency: monthly (real microfinance is often weekly or
   fortnightly; monthly is used to keep the project simple)
 - Data: synthetic, generated with realistic patterns
-- Scale: 10 branches, about 5,000 customers, about 6,000 loans, 18 months
+- Scale: 10 branches, about 5,000 customers, about 5,000 loans, 18 months
 
 ## Out of scope
 - Other products (MSME, housing loans)
