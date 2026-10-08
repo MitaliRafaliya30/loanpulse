@@ -1,0 +1,28 @@
+name: 'loanpulse_dbt'
+version: '1.0.0'
+profile: 'loanpulse_dbt'
+
+model-paths: ["models"]
+macro-paths: ["macros"]
+test-paths: ["tests"]
+
+clean-targets:
+  - "target"
+  - "dbt_packages"
+
+# Values used inside models
+vars:
+  as_of_date: '2026-06-30'        # "today" for our fake bank
+  spine_start_date: '2025-01-01'  # first date in the calendar
+
+models:
+  loanpulse_dbt:
+    staging:
+      +schema: STAGING
+      +materialized: view
+    intermediate:
+      +schema: INTERMEDIATE
+      +materialized: table
+    marts:
+      +schema: MARTS
+      +materialized: table

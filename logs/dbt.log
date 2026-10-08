@@ -1,0 +1,27 @@
+[0m18:54:16.840699 [debug] [MainThread]: Sending event: {'category': 'dbt', 'action': 'invocation', 'label': 'start', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x000001826EEADFD0>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x000001826CA39090>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x000001827181B9D0>]}
+
+
+============================== 18:54:16.848615 | 332c7151-c030-498d-a5b3-02df95ae9629 ==============================
+[0m18:54:16.848615 [info ] [MainThread]: Running with dbt=1.12.5
+[0m18:54:16.849847 [debug] [MainThread]: running dbt with arguments {'maximum_seed_size_mib': '1', 'no_print': 'None', 'static_parser': 'True', 'target_path': 'None', 'version_check': 'True', 'warn_error_options': 'WarnErrorOptionsV2(error=[], warn=[], silence=[])', 'printer_width': '80', 'write_json': 'True', 'empty': 'None', 'log_cache_events': 'False', 'introspect': 'True', 'cache_selected_only': 'False', 'log_format': 'default', 'debug': 'False', 'fail_fast': 'False', 'partial_parse': 'True', 'send_anonymous_usage_stats': 'True', 'quiet': 'False', 'warn_error': 'None', 'profiles_dir': 'C:\\Users\\win-11\\.dbt', 'invocation_command': 'dbt init loanpulse_dbt --skip-profile-setup', 'hints_enabled': 'True', 'use_colors': 'True', 'use_experimental_parser': 'False', 'indirect_selection': 'eager', 'log_path': 'logs'}
+[0m18:54:16.910556 [debug] [MainThread]: Starter project path: C:\Users\win-11\Desktop\loanpulse\.venv\Lib\site-packages\dbt\include\starter_project
+[0m18:54:16.961335 [info ] [MainThread]: Your new dbt project "loanpulse_dbt" was created!
+Initialized new project in C:\Users\win-11\Desktop\loanpulse\loanpulse_dbt\loanpulse_dbt
+
+For more information on how to configure the profiles.yml file,
+please consult the dbt documentation here:
+
+  https://docs.getdbt.com/docs/configure-your-profile
+
+One more thing:
+
+Need help? Don't hesitate to reach out to us via GitHub issues or on Slack:
+
+  https://community.getdbt.com/
+
+Happy modeling!
+
+[0m18:54:16.962605 [debug] [MainThread]: Command `dbt init` succeeded at 18:54:16.962465 after 0.37 seconds
+[0m18:54:16.962978 [debug] [MainThread]: Sending event: {'category': 'dbt', 'action': 'invocation', 'label': 'end', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x0000018271643360>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x0000018271861370>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x00000182718B4490>]}
+[0m18:54:16.963357 [debug] [MainThread]: Flushing usage events
+[0m18:54:19.109267 [debug] [MainThread]: An error was encountered while trying to flush usage events
