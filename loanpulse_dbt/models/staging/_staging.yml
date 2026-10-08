@@ -1,0 +1,43 @@
+version: 2
+
+models:
+  - name: stg_branches
+    columns:
+      - name: branch_id
+        data_tests: [unique, not_null]
+
+  - name: stg_borrower_groups
+    columns:
+      - name: group_id
+        data_tests: [unique, not_null]
+
+  - name: stg_customers
+    columns:
+      - name: customer_id
+        data_tests: [unique, not_null]
+
+  - name: stg_loans
+    columns:
+      - name: loan_id
+        data_tests: [unique, not_null]
+      - name: disbursement_date
+        data_tests: [not_null]
+
+  - name: stg_repayment_schedule
+    columns:
+      - name: loan_id
+        data_tests: [not_null]
+      - name: due_date
+        data_tests: [not_null]
+
+  - name: stg_collections
+    columns:
+      - name: collection_id
+        data_tests: [unique, not_null]
+      - name: payment_date
+        data_tests: [not_null]
+
+  - name: stg_loan_writeoffs
+    columns:
+      - name: loan_id
+        data_tests: [unique, not_null]

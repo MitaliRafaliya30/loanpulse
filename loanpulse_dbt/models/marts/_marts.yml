@@ -1,0 +1,14 @@
+version: 2
+
+models:
+  - name: fct_loan_daily_status
+    description: One row per loan per day with DPD and RBI asset classification.
+    columns:
+      - name: loan_id
+        data_tests: [not_null]
+
+      - name: status_date
+        data_tests: [not_null]
+
+      - name: asset_class
+        data_tests: [not_null]
