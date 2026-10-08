@@ -1,0 +1,95 @@
+-- 12_roles_and_access.sql
+-- Two business roles. Both read only from MARTS.
+-- Only COMPLIANCE_OFFICER sees unmasked PII (controlled by masking policies).
+
+USE ROLE SECURITYADMIN;
+
+
+-- Create business roles
+CREATE ROLE IF NOT EXISTS ANALYST
+    COMMENT = 'Risk and business analysts. Reads marts. PII masked.';
+
+CREATE ROLE IF NOT EXISTS COMPLIANCE_OFFICER
+    COMMENT = 'Compliance team. Reads marts. PII visible.';
+
+
+-- Standard hierarchy: SYSADMIN manages all custom roles
+GRANT ROLE ANALYST TO ROLE SYSADMIN;
+GRANT ROLE COMPLIANCE_OFFICER TO ROLE SYSADMIN;
+
+
+-- ============================================================
+-- ANALYST
+-- ============================================================
+
+GRANT USAGE
+    ON WAREHOUSE LOANPULSE_WH
+    TO ROLE ANALYST;
+
+GRANT USAGE
+    ON DATABASE LOANPULSE
+    TO ROLE ANALYST;
+
+GRANT USAGE
+    ON SCHEMA LOANPULSE.MARTS
+    TO ROLE ANALYST;
+
+GRANT SELECT
+    ON ALL TABLES IN SCHEMA LOANPULSE.MARTS
+    TO ROLE ANALYST;
+
+GRANT SELECT
+    ON ALL VIEWS IN SCHEMA LOANPULSE.MARTS
+    TO ROLE ANALYST;
+
+GRANT SELECT
+    ON FUTURE TABLES IN SCHEMA LOANPULSE.MARTS
+    TO ROLE ANALYST;
+
+GRANT SELECT
+    ON FUTURE VIEWS IN SCHEMA LOANPULSE.MARTS
+    TO ROLE ANALYST;
+
+
+-- ============================================================
+-- COMPLIANCE_OFFICER
+-- ============================================================
+
+GRANT USAGE
+    ON WAREHOUSE LOANPULSE_WH
+    TO ROLE COMPLIANCE_OFFICER;
+
+GRANT USAGE
+    ON DATABASE LOANPULSE
+    TO ROLE COMPLIANCE_OFFICER;
+
+GRANT USAGE
+    ON SCHEMA LOANPULSE.MARTS
+    TO ROLE COMPLIANCE_OFFICER;
+
+GRANT SELECT
+    ON ALL TABLES IN SCHEMA LOANPULSE.MARTS
+    TO ROLE COMPLIANCE_OFFICER;
+
+GRANT SELECT
+    ON ALL VIEWS IN SCHEMA LOANPULSE.MARTS
+    TO ROLE COMPLIANCE_OFFICER;
+
+GRANT SELECT
+    ON FUTURE TABLES IN SCHEMA LOANPULSE.MARTS
+    TO ROLE COMPLIANCE_OFFICER;
+
+GRANT SELECT
+    ON FUTURE VIEWS IN SCHEMA LOANPULSE.MARTS
+    TO ROLE COMPLIANCE_OFFICER;
+
+
+-- Let your own user switch into these roles for testing.
+-- Replace <your-username> with the result of:
+-- SELECT CURRENT_USER();
+
+GRANT ROLE ANALYST
+    TO USER <your-username>;
+
+GRANT ROLE COMPLIANCE_OFFICER
+    TO USER <your-username>

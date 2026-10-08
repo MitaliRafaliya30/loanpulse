@@ -1,6 +1,30 @@
 version: 2
 
 models:
+  - name: dim_customers
+    description: Customer details. PII columns are masked by Snowflake masking policies.
+    columns:
+      - name: customer_id
+        data_tests: [unique, not_null]
+
+      - name: full_name
+        description: Masked unless role is COMPLIANCE_OFFICER.
+        config:
+          meta:
+            contains_pii: true
+
+      - name: phone
+        description: Shows last 4 digits unless role is COMPLIANCE_OFFICER.
+        config:
+          meta:
+            contains_pii: true
+
+      - name: aadhaar_number
+        description: Shows last 4 digits unless role is COMPLIANCE_OFFICER.
+        config:
+          meta:
+            contains_pii: true
+
   - name: fct_loan_daily_status
     description: One row per loan per day with DPD and RBI asset classification.
     columns:

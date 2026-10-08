@@ -182,3 +182,21 @@ Shows how many loans moved between RBI categories month over month.
 Compares the frozen reported snapshot with the current restated view.
 
 **Note:** Month-end tables use `snapshot_date` (the last day of the month) instead of `snapshot_month`.
+
+
+### `dim_customers` (view)
+
+**Grain:** One row per customer.
+
+Customer details with branch information. Name, phone and Aadhaar are masked by Snowflake masking policies unless the role is `COMPLIANCE_OFFICER`.
+
+Kept as a view so masking is applied at query time.
+
+## Access Control
+
+| Role | Access | PII |
+|---|---|---|
+| `ANALYST` | MARTS only | Masked |
+| `COMPLIANCE_OFFICER` | MARTS only | Visible |
+| `TRANSFORMER` | Reads RAW, builds STAGING, INTERMEDIATE, MARTS | Masked |
+| `SYSADMIN` | Everything | Masked |
