@@ -1,0 +1,27 @@
+-- 01_setup.sql
+-- Creates compute (warehouse) and storage (database, schema) for LoanPulse.
+
+-- SYSADMIN is the standard role for creating objects.
+-- We avoid ACCOUNTADMIN for daily work (least privilege).
+USE ROLE SYSADMIN;
+
+CREATE WAREHOUSE IF NOT EXISTS LOANPULSE_WH
+    WAREHOUSE_SIZE = 'XSMALL'
+    AUTO_SUSPEND = 60
+    AUTO_RESUME = TRUE
+    INITIALLY_SUSPENDED = TRUE;
+
+CREATE DATABASE IF NOT EXISTS LOANPULSE;
+CREATE SCHEMA IF NOT EXISTS LOANPULSE.RAW;
+
+-- Safety: stop the warehouse if it uses too many credits.
+-- Only ACCOUNTADMIN can create resource monitors.
+USE ROLE ACCOUNTADMIN;
+
+CREATE RESOURCE MONITOR IF NOT EXISTS LOANPULSE_MONITOR
+    WITH CREDIT_QUOTA = 50
+    TRIGGERS
+        ON 80 PERCENT DO NOTIFY
+        ON 100 PERCENT DO SUSPEND;
+
+ALTER WAREHOUSE LOANPULSE_WH SET RESOURCE_MONITOR = LOANPULSE_MONITOR;
