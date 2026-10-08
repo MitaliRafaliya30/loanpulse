@@ -36,11 +36,11 @@ STRESSED_BRANCHES = ["BR005", "BR006"]
 
 # Chance that a group is "high risk"
 HIGH_RISK_GROUP_SHARE_NORMAL = 0.15
-HIGH_RISK_GROUP_SHARE_STRESSED = 0.50
+HIGH_RISK_GROUP_SHARE_STRESSED = 0.70
 
 # Customer behaviour mix: (good, sometimes_late, defaulter)
 BEHAVIOUR_LOW_RISK_GROUP = (0.85, 0.10, 0.05)
-BEHAVIOUR_HIGH_RISK_GROUP = (0.50, 0.25, 0.25)
+BEHAVIOUR_HIGH_RISK_GROUP = (0.40, 0.25, 0.35)
 
 # Loan settings
 PRINCIPAL_OPTIONS = [20000, 25000, 30000, 35000, 40000, 50000, 60000]
@@ -53,7 +53,7 @@ REPEAT_LOAN_CHANCE = 0.5
 
 # Defaulter settings
 DEFAULTER_RECOVERY_CHANCE = 0.3   # some defaulters pay all dues later
-WRITEOFF_AFTER_DAYS = 180         # unpaid for this many days = written off
+WRITEOFF_AFTER_DAYS = 365         # unpaid for this many days = written off
 
 # Payment mode and posting delay
 UPI_SHARE = 0.3                   # UPI is posted same day
