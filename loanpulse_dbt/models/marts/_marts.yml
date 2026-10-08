@@ -12,3 +12,39 @@ models:
 
       - name: asset_class
         data_tests: [not_null]
+
+  - name: fct_portfolio_month_end_snapshot
+    description: Frozen month-end portfolio, based on payments posted by month-end.
+    columns:
+      - name: snapshot_date
+        data_tests: [not_null]
+
+      - name: loan_id
+        data_tests: [not_null]
+
+      - name: asset_class
+        data_tests: [not_null]
+
+  - name: fct_branch_monthly_metrics
+    description: GNPA, PAR 30 and collection efficiency per branch per month.
+    columns:
+      - name: snapshot_date
+        data_tests: [not_null]
+
+      - name: branch_id
+        data_tests: [not_null]
+
+  - name: fct_monthly_roll_rates
+    description: Movement of loans between RBI categories month over month.
+    columns:
+      - name: from_class
+        data_tests: [not_null]
+
+      - name: to_class
+        data_tests: [not_null]
+
+  - name: rpt_month_end_restatements
+    description: Reported (frozen) vs current view of each month-end.
+    columns:
+      - name: snapshot_date
+        data_tests: [unique, not_null]

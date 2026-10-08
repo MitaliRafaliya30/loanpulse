@@ -168,3 +168,17 @@ Same columns as loan_daily_status, plus:
 
 7. **Small data volume by choice.** The design works at any scale.
    Volume is kept small to stay within free cloud credits.
+
+### `fct_monthly_roll_rates`
+
+**Grain:** One row per month, from category, to category.
+
+Shows how many loans moved between RBI categories month over month.
+
+### `rpt_month_end_restatements`
+
+**Grain:** One row per month-end.
+
+Compares the frozen reported snapshot with the current restated view.
+
+**Note:** Month-end tables use `snapshot_date` (the last day of the month) instead of `snapshot_month`.
