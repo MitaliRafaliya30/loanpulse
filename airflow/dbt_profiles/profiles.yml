@@ -1,0 +1,13 @@
+loanpulse_dbt:
+  target: airflow
+  outputs:
+    airflow:
+      type: snowflake
+      account: "{{ env_var('SNOWFLAKE_ACCOUNT') }}"
+      user: DBT_USER
+      private_key_path: /home/airflow/.snowflake/dbt_user_key.p8
+      role: TRANSFORMER
+      warehouse: LOANPULSE_WH
+      database: LOANPULSE
+      schema: STAGING
+      threads: 4

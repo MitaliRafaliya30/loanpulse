@@ -3,3 +3,6 @@ target/
 dbt_packages/
 logs/
 .env
+airflow/logs/
+airflow/config/
+.user.yml
