@@ -83,3 +83,14 @@ models:
       - name: months_on_book
         data_tests:
           - not_null
+
+  - name: fct_early_warning_features
+    description: "Point-in-time features and 60-day outcome for the early warning model."
+    columns:
+      - name: snapshot_date
+        data_tests:
+          - not_null
+
+      - name: loan_id
+        data_tests:
+          - not_null
