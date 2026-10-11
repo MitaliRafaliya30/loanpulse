@@ -72,3 +72,14 @@ models:
     columns:
       - name: snapshot_date
         data_tests: [unique, not_null]
+
+  - name: fct_vintage_performance
+    description: "Share of loans 30+ days late by disbursement month and months on book."
+    columns:
+      - name: vintage_month
+        data_tests:
+          - not_null
+
+      - name: months_on_book
+        data_tests:
+          - not_null
