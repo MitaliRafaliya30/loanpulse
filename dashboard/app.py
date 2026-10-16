@@ -5,6 +5,7 @@
 import pandas as pd
 import plotly.express as px
 import streamlit as st
+from pathlib import Path
 
 from db import run_query
 
@@ -142,6 +143,30 @@ tab_overview, tab_branches, tab_roll, tab_vintage, tab_quality = st.tabs(
 # ---------------------------------------------------------------
 
 with tab_overview:
+    # AI commentary for this month, if it has been generated
+    commentary_file = (
+        Path(__file__).resolve().parent.parent
+        / "reports"
+        / f"commentary_{selected_month:%Y-%m}.md"
+    )
+
+    if commentary_file.exists():
+        text = commentary_file.read_text(encoding="utf-8")
+
+        # Drop the report title and audit section
+        body = text.split("<!-- AUDIT -->")[0].split("\n", 1)[1]
+
+        if "Written by: template" in text:
+            label = "Risk commentary (standard template)"
+        else:
+            label = (
+                "Risk commentary "
+                "(AI-written, every number checked against data)"
+            )
+
+        with st.expander(label, expanded=True):
+            st.markdown(body)
+
     left, right = st.columns(2)
 
     with left:
@@ -263,11 +288,26 @@ with tab_branches:
 
     st.subheader("Where is stress building?")
 
+    # Format nullable metrics safely.
+    worst_gnpa = worst["gnpa_pct"]
+    worst_collection_eff = worst["collection_efficiency_pct"]
+
+    gnpa_text = (
+        f"{worst_gnpa:.2f}%"
+        if pd.notna(worst_gnpa)
+        else "N/A"
+    )
+
+    collection_eff_text = (
+        f"{worst_collection_eff:.1f}%"
+        if pd.notna(worst_collection_eff)
+        else "N/A"
+    )
+
     st.write(
         f"**{worst['branch_name']} ({worst['district']})** "
-        f"has the highest GNPA at **{worst['gnpa_pct']:.2f}%**, "
-        f"with collection efficiency of "
-        f"{worst['collection_efficiency_pct']:.1f}%."
+        f"has the highest GNPA at **{gnpa_text}**, "
+        f"with collection efficiency of **{collection_eff_text}**."
     )
 
     fig = px.bar(
