@@ -5,3 +5,11 @@ __pycache__/
 data/
 *.csv
 .DS_Store
+
+# Secrets and local config (never commit)
+dashboard/.streamlit/secrets.toml
+airflow/config/airflow.cfg
+*.p8
+
+# Airflow runtime logs (contain account and bucket names)
+airflow/logs/
