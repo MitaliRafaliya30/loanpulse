@@ -217,3 +217,15 @@ RAW master tables are fully reloaded every day, so they only hold the latest ver
 - PII is never snapshotted. A snapshot stores every column of its source, so `snap_customers` reads the view `stg_customers_no_pii`. dbt sees masked values, so a PII snapshot would store masked text forever. A test checks this.
 - The `SNAPSHOTS` schema is not granted to `ANALYST` or `COMPLIANCE_OFFICER`.
 - `data_generator/simulate_master_changes.py` creates a later version of the master files (renamed branches, changed occupations) to demonstrate the history.
+
+
+## Payment corrections (latest version wins)
+
+A payment can arrive more than once: exact duplicates from the source system, and corrections (the same `collection_id` sent again later in a new file, for example a fixed payment mode or field officer).
+
+- **RAW** is append-only. Every version stays, so the history is auditable.
+- **`stg_collections`** keeps the latest version of each `collection_id`. It is an incremental model with the `merge` strategy. Only payments that received new RAW rows are recomputed, using all their versions, so late-arriving old files cannot overwrite a newer correction.
+- The source has no `updated_at` column, so the **version date is the landing folder date** (`date=YYYY-MM-DD` in the file path). Ties are broken by `_loaded_at`, then the file name.
+- `record_version_date` and `is_corrected` are added to staging.
+- A correction keeps the original `posted_date`. Month-end snapshots are frozen, so reported numbers do not change. The restatement report shows any effect.
+- `data_generator/simulate_payment_corrections.py` creates correction files (`collections_corrections.csv`) to demonstrate this. Test `assert_corrections_use_latest_version` checks that staging matches the correction values.
