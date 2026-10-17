@@ -25,14 +25,71 @@ models:
           meta:
             contains_pii: true
 
+  - name: dim_branches
+    description: One row per branch. Joins to facts on branch_id.
+    columns:
+      - name: branch_id
+        data_tests: [unique, not_null]
+
+  - name: dim_loans
+    description: One row per loan with contract terms, lifecycle dates and current status. No PII.
+    columns:
+      - name: loan_id
+        data_tests: [unique, not_null]
+
+      - name: customer_id
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_customers')
+                field: customer_id
+
+      - name: branch_id
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_branches')
+                field: branch_id
+
+      - name: loan_status
+        data_tests:
+          - accepted_values:
+              arguments:
+                values: ['ACTIVE', 'CLOSED', 'WRITTEN_OFF']
+
+  - name: dim_dates
+    description: Calendar with one row per day. Fiscal year follows the Indian April to March year.
+    columns:
+      - name: date_day
+        data_tests: [unique, not_null]
+
   - name: fct_loan_daily_status
     description: One row per loan per day with DPD and RBI asset classification.
     columns:
       - name: loan_id
-        data_tests: [not_null]
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_loans')
+                field: loan_id
 
       - name: status_date
-        data_tests: [not_null]
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_dates')
+                field: date_day
+
+      - name: branch_id
+        data_tests:
+          - relationships:
+              arguments:
+                to: ref('dim_branches')
+                field: branch_id
 
       - name: asset_class
         data_tests: [not_null]
@@ -41,10 +98,27 @@ models:
     description: Frozen month-end portfolio, based on payments posted by month-end.
     columns:
       - name: snapshot_date
-        data_tests: [not_null]
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_dates')
+                field: date_day
 
       - name: loan_id
-        data_tests: [not_null]
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_loans')
+                field: loan_id
+
+      - name: branch_id
+        data_tests:
+          - relationships:
+              arguments:
+                to: ref('dim_branches')
+                field: branch_id
 
       - name: asset_class
         data_tests: [not_null]
@@ -53,10 +127,20 @@ models:
     description: GNPA, PAR 30 and collection efficiency per branch per month.
     columns:
       - name: snapshot_date
-        data_tests: [not_null]
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_dates')
+                field: date_day
 
       - name: branch_id
-        data_tests: [not_null]
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_branches')
+                field: branch_id
 
   - name: fct_monthly_roll_rates
     description: Movement of loans between RBI categories month over month.
