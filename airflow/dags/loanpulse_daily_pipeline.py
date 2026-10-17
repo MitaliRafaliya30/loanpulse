@@ -337,6 +337,11 @@ def loanpulse_daily_pipeline():
             f"--profiles-dir {DBT_PROFILES_DIR} "
             "--target-path /tmp/dbt_target "
             "--log-path /tmp/dbt_logs "
+            # The project folder is mounted and changes often, while the
+            # target folder keeps cached parse state between runs. A stale
+            # cache once gave "unable to infer all dependencies" errors.
+            # A full parse takes about 5 seconds, so always do it.
+            "--no-partial-parse "
             '--vars "{as_of_date: \'$AS_OF_DATE\'}"'
         ),
         env={
