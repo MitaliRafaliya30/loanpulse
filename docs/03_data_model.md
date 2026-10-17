@@ -198,5 +198,6 @@ Kept as a view so masking is applied at query time.
 |---|---|---|
 | `ANALYST` | MARTS only | Masked |
 | `COMPLIANCE_OFFICER` | MARTS only | Visible |
+| `LOADER` | Loads RAW only (INSERT, DELETE, SELECT). No MARTS access | Masked |
 | `TRANSFORMER` | Reads RAW, builds STAGING, INTERMEDIATE, MARTS | Masked |
 | `SYSADMIN` | Everything | Masked |
