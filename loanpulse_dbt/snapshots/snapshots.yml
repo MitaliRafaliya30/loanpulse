@@ -1,0 +1,40 @@
+version: 2
+
+# SCD Type 2 history for master data (dbt snapshots, "check" strategy).
+# The source has no updated_at column, so dbt compares the tracked columns
+# on every run. When one changes, the old row is closed (dbt_valid_to is set)
+# and a new current row is added (dbt_valid_to is NULL).
+#
+# PII (name, phone, Aadhaar) must NOT end up in a snapshot.
+# A snapshot stores EVERY column of its source, not only check_cols, so
+# snap_customers reads stg_customers_no_pii (a view without PII columns).
+# dbt runs as TRANSFORMER and sees masked values, so a snapshot of PII
+# would store the masked text permanently.
+# Test assert_no_pii_in_snapshots checks this on every build.
+
+snapshots:
+  - name: snap_branches
+    description: History of branch details. One row per branch version.
+    relation: ref('stg_branches')
+    config:
+      unique_key: branch_id
+      strategy: check
+      check_cols: [branch_name, district, state]
+
+  - name: snap_borrower_groups
+    description: History of borrower groups. One row per group version.
+    relation: ref('stg_borrower_groups')
+    config:
+      unique_key: group_id
+      strategy: check
+      check_cols: [branch_id]
+
+  - name: snap_customers
+    description: >
+      History of customer branch, group and occupation. No PII.
+      One row per customer version.
+    relation: ref('stg_customers_no_pii')
+    config:
+      unique_key: customer_id
+      strategy: check
+      check_cols: [branch_id, group_id, occupation]

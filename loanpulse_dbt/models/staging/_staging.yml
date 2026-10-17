@@ -16,6 +16,12 @@ models:
       - name: customer_id
         data_tests: [unique, not_null]
 
+  - name: stg_customers_no_pii
+    description: Customer columns without PII. Source for snap_customers.
+    columns:
+      - name: customer_id
+        data_tests: [unique, not_null]
+
   - name: stg_loans
     columns:
       - name: loan_id

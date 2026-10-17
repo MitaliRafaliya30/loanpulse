@@ -5,6 +5,7 @@ profile: 'loanpulse_dbt'
 model-paths: ["models"]
 macro-paths: ["macros"]
 test-paths: ["tests"]
+snapshot-paths: ["snapshots"]
 
 clean-targets:
   - "target"
@@ -26,3 +27,8 @@ models:
     marts:
       +schema: MARTS
       +materialized: table
+
+# History tables (SCD Type 2). Kept out of MARTS, so ANALYST cannot read them.
+snapshots:
+  loanpulse_dbt:
+    +schema: SNAPSHOTS

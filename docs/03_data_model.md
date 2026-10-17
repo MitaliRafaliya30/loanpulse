@@ -201,3 +201,19 @@ Kept as a view so masking is applied at query time.
 | `LOADER` | Loads RAW only (INSERT, DELETE, SELECT). No MARTS access | Masked |
 | `TRANSFORMER` | Reads RAW, builds STAGING, INTERMEDIATE, MARTS | Masked |
 | `SYSADMIN` | Everything | Masked |
+
+## Master data history (SCD Type 2)
+
+RAW master tables are fully reloaded every day, so they only hold the latest version. dbt snapshots keep the history in the `SNAPSHOTS` schema.
+
+| Snapshot | Key | Tracked columns |
+|---|---|---|
+| `snap_branches` | branch_id | branch_name, district, state |
+| `snap_borrower_groups` | group_id | branch_id |
+| `snap_customers` | customer_id | branch_id, group_id, occupation |
+
+- Strategy: `check` (the source has no `updated_at` column).
+- Each row has `dbt_valid_from` and `dbt_valid_to`. The current version has `dbt_valid_to` NULL.
+- PII is never snapshotted. A snapshot stores every column of its source, so `snap_customers` reads the view `stg_customers_no_pii`. dbt sees masked values, so a PII snapshot would store masked text forever. A test checks this.
+- The `SNAPSHOTS` schema is not granted to `ANALYST` or `COMPLIANCE_OFFICER`.
+- `data_generator/simulate_master_changes.py` creates a later version of the master files (renamed branches, changed occupations) to demonstrate the history.
