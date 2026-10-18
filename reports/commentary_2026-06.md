@@ -1,22 +1,21 @@
 # Portfolio commentary: June 2026
 
 ### Headline
-June 2026 credit quality weakened as GNPA rose to 5.18% and collection efficiency fell to 93.22%.
+In June 2026, GNPA rose by 0.91 points to 5.18% and collection efficiency fell by 4.28 points to 93.22%.
 
 ### What changed
-- GNPA increased 0.91 points to 5.18%, PAR30 rose 1.17 points to 7.27%, and collection efficiency fell 4.28 points to 93.22%.
-- Roll rates show 91.43% of SMA1 loans moved to SMA2 and 90.0% of SMA2 loans became NPAs.
-- The portfolio stands at 9.19 crore outstanding across 4468 active loans.
+- GNPA rose by 0.91 points to 5.18% and PAR30 rose by 1.17 points to 7.27%.
+- Collection efficiency fell by 4.28 points to 93.22% across 4468 active loans totaling 9.19 crore, with 28 previous month loans reclassified.
 
 ### Where to act
-- Gaya Town (Gaya) has the highest GNPA at 10.53% and lowest collection efficiency at 86.03%.
-- Review data quality after 28 loans were reclassified in the previous month and 328 total reclassifications.
+- Focus on stressed branches: Gaya Town (Gaya) (10.53% GNPA, 86.03% CE), Muzaffarpur Market (Muzaffarpur) (7.62% GNPA, 91.53% CE), and Varanasi Main (Varanasi) (7.36% GNPA, 88.97% CE).
+- Address high roll rates: 91.43% from SMA1 to SMA2 and 90.0% from SMA2 to NPA.
 
 <!-- AUDIT -->
 
 ---
 
-- Generated: 2026-10-11 20:34
+- Generated: 2026-10-18 18:18
 - Written by: openrouter/free
 - Number check: PASSED on attempt 1
 
