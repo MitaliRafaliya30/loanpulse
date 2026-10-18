@@ -45,6 +45,30 @@ Field officers collect cash and record it 0 to 3 days late. Because of that:
 - 328 loans were reclassified after their month-end was reported. This is why frozen snapshots matter.
 - Early warning: AUC 0.82, but the model caught 49.3% of bad loans vs 50.7% for the simple rule, so the rule was kept. See [ml/model_report.md](ml/model_report.md).
 
+## Dashboard
+
+The Streamlit dashboard reads only the dbt marts, as the read-only `ANALYST` role, so customer PII is always masked.
+
+**Portfolio:** KPIs, AI risk commentary, risk trend and RBI asset classes.
+
+![Portfolio overview](docs/images/dashboard_overview.png)
+
+**Branches:** where stress is building.
+
+![Branch stress](docs/images/dashboard_branches.png)
+
+**Roll rates:** how loans move between RBI categories month to month.
+
+![Roll rates](docs/images/dashboard_roll_rates.png)
+
+**Vintages:** are newer loans riskier than older ones?
+
+![Vintage analysis](docs/images/dashboard_vintages.png)
+
+**Data quality:** loans reclassified after reporting, and a customer lookup with masked name, phone and Aadhaar.
+
+![Data quality and masked PII](docs/images/dashboard_data_quality.png)
+
 ## Data flow
 
 ```
