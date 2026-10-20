@@ -188,6 +188,7 @@ headline number unchanged. `--with-amounts` also changes some amounts.
 - **RAW is source-aligned and append-only.** Nothing is transformed there, so everything can be rebuilt from it.
 - **Logic lives in dbt, not in the dashboard.** The dashboard, ML and AI all read the same tested marts.
 - **`dim_customers` must stay a view.** dbt sees masked values, so a table would store masked text forever.
+- **Master data is loaded insert-only.** Each daily full file is compared with the latest stored version by row hash, and only new or changed rows are inserted. RAW is never updated, and `LOADER` has no UPDATE or DELETE right.
 - **Snapshots never contain PII.** A snapshot stores every source column, so `snap_customers` reads a PII-free view.
 - **dbt failures are not retried in Airflow.** A failed test is a data problem, and a retry only burns credits.
 

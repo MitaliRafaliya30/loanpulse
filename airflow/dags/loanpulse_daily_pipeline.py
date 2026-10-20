@@ -37,6 +37,42 @@ MASTER_TABLES = [
     "customers",
 ]
 
+# Master tables: key column and typed columns, in the order of the CSV files.
+# Only rows that are new or changed are inserted (see build_master_insert_sql).
+MASTER_SPECS = {
+    "branches": (
+        "branch_id",
+        [
+            ("branch_id", "VARCHAR"),
+            ("branch_name", "VARCHAR"),
+            ("district", "VARCHAR"),
+            ("state", "VARCHAR"),
+            ("opened_date", "DATE"),
+        ],
+    ),
+    "borrower_groups": (
+        "group_id",
+        [
+            ("group_id", "VARCHAR"),
+            ("branch_id", "VARCHAR"),
+            ("formed_date", "DATE"),
+        ],
+    ),
+    "customers": (
+        "customer_id",
+        [
+            ("customer_id", "VARCHAR"),
+            ("full_name", "VARCHAR"),
+            ("phone", "VARCHAR"),
+            ("aadhaar_number", "VARCHAR"),
+            ("group_id", "VARCHAR"),
+            ("branch_id", "VARCHAR"),
+            ("occupation", "VARCHAR"),
+            ("onboarded_date", "DATE"),
+        ],
+    ),
+}
+
 # Daily transactional data.
 DAILY_TABLES = [
     "loans",
@@ -116,6 +152,62 @@ def build_copy_sql(table, force=False):
         sql += " FORCE = TRUE"
 
     return sql
+
+
+def build_master_insert_sql(table):
+    """
+    Build an INSERT that adds only NEW or CHANGED master rows.
+
+    RAW stays append-only: old versions are never updated or deleted.
+    The daily full file is read straight from the S3 stage (no copy of PII
+    in a staging table). Each row gets a hash of all its columns. A row is
+    inserted only if its key is new, or its hash differs from the hash of the
+    latest stored version of that key. Staging keeps the latest version.
+    """
+    key, columns = MASTER_SPECS[table]
+    names = [name for name, _ in columns]
+
+    name_list = ", ".join(names)
+    select_list = ", ".join(f"h.{name}" for name in names)
+
+    typed_columns = ", ".join(
+        f"${position}::{kind} AS {name}"
+        for position, (name, kind) in enumerate(columns, start=1)
+    )
+
+    hash_parts = ", ".join(
+        f"COALESCE({name}::VARCHAR, '')" for name in names
+    )
+
+    return f"""
+        INSERT INTO RAW.{table.upper()} ({name_list}, _source_file, _row_hash)
+        WITH incoming AS (
+            SELECT
+                {typed_columns},
+                METADATA$FILENAME AS _source_file
+            FROM @RAW.S3_RAW_STAGE/{table}/ (FILE_FORMAT => 'RAW.CSV_FORMAT')
+        ),
+        hashed AS (
+            SELECT
+                *,
+                SHA2(CONCAT_WS('|', {hash_parts}), 256) AS _row_hash
+            FROM incoming
+        ),
+        latest AS (
+            SELECT {key}, _row_hash
+            FROM RAW.{table.upper()}
+            QUALIFY ROW_NUMBER() OVER (
+                PARTITION BY {key}
+                ORDER BY _loaded_at DESC, _source_file DESC
+            ) = 1
+        )
+        SELECT {select_list}, h._source_file, h._row_hash
+        FROM hashed h
+        LEFT JOIN latest l
+            ON h.{key} = l.{key}
+        WHERE l.{key} IS NULL
+           OR l._row_hash IS DISTINCT FROM h._row_hash
+    """
 
 
 def count_loaded_files(cursor):
@@ -237,25 +329,22 @@ def loanpulse_daily_pipeline():
         total_loaded = 0
 
         try:
-            # Master data: delete existing records and reload.
+            # Master data: insert only new or changed rows (RAW is append-only).
             for table in MASTER_TABLES:
                 cursor.execute("BEGIN")
 
                 cursor.execute(
-                    f"DELETE FROM RAW.{table.upper()}"
+                    build_master_insert_sql(table)
                 )
 
-                cursor.execute(
-                    build_copy_sql(table, force=True)
-                )
-
-                loaded = count_loaded_files(cursor)
+                result = cursor.fetchone()
+                inserted = result[0] if result else 0
 
                 cursor.execute("COMMIT")
 
                 print(
-                    f"{table}: full reload, "
-                    f"{loaded} file(s)"
+                    f"{table}: {inserted} new or changed "
+                    f"row(s) inserted"
                 )
 
             # Transactional data: skip previously loaded files.

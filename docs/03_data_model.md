@@ -229,3 +229,17 @@ A payment can arrive more than once: exact duplicates from the source system, an
 - `record_version_date` and `is_corrected` are added to staging.
 - A correction keeps the original `posted_date`. Month-end snapshots are frozen, so reported numbers do not change. The restatement report shows any effect.
 - `data_generator/simulate_payment_corrections.py` creates correction files (`collections_corrections.csv`) to demonstrate this. Test `assert_corrections_use_latest_version` checks that staging matches the correction values.
+
+
+## Master data loading (insert only on change)
+
+The source sends the full master file (branches, borrower groups, customers) every day. RAW is append-only, so the daily load only inserts rows that are **new or changed**.
+
+- Each row gets a hash (`_row_hash`) of all its columns.
+- The DAG reads the file straight from the S3 stage and compares each row with the **latest stored version** of its key. A row is inserted only if the key is new or the hash is different.
+- Nothing in RAW is updated or deleted. Every version stays, with `_loaded_at` and `_source_file`.
+- Staging (`stg_branches`, `stg_borrower_groups`, `stg_customers`) keeps the latest version of each key.
+- dbt snapshots build the SCD Type 2 history on top of staging.
+- No staging copy of PII is created, and `LOADER` only needs `SELECT` and `INSERT`.
+- Known limit: a key that disappears from the file is not removed. The source still sends the whole file every day, so the file is read in full.
+- The manual scripts `05_load_raw.sql` and `07_full_reload.sql` stay as the first-load and backfill path.

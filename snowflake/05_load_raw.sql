@@ -1,6 +1,8 @@
 -- 05_load_raw.sql
--- Loads files from S3 into RAW tables.
--- Master tables: full reload every time (TRUNCATE + FORCE).
+-- Loads files from S3 into RAW tables. Manual first load / backfill only.
+-- The daily Airflow DAG does NOT use the master section below: it inserts only
+-- new or changed master rows (see airflow/dags and 18_master_load.sql).
+-- Master tables here: full reload (TRUNCATE + FORCE).
 -- Daily tables: incremental. COPY skips files it has already loaded.
 
 USE ROLE SYSADMIN;

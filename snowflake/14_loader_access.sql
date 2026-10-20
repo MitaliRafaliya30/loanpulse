@@ -40,14 +40,14 @@ GRANT USAGE
     ON FILE FORMAT LOANPULSE.RAW.CSV_FORMAT
     TO ROLE LOADER;
 
--- COPY INTO needs INSERT.
--- Master tables are reloaded with DELETE + COPY, so DELETE is needed.
--- SELECT is needed for the business date query (MAX(posted_date)).
-GRANT SELECT, INSERT, DELETE
+-- RAW is append-only, so LOADER only needs INSERT (no UPDATE, no DELETE).
+-- SELECT is needed for the business date query (MAX(posted_date)) and for
+-- comparing master rows with their latest stored version.
+GRANT SELECT, INSERT
     ON ALL TABLES IN SCHEMA LOANPULSE.RAW
     TO ROLE LOADER;
 
-GRANT SELECT, INSERT, DELETE
+GRANT SELECT, INSERT
     ON FUTURE TABLES IN SCHEMA LOANPULSE.RAW
     TO ROLE LOADER;
 
